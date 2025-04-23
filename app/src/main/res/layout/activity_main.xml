@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+android:paddingTop="30dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/green_light"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <TextView
+
+        android:id="@+id/user_details"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_margin="10dp"
+        android:text="Hello!"
+        android:textSize="24sp"
+        tools:ignore="HardcodedText,InvalidId" />
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/blue_light"
+        android:gravity="center"
+        android:text="Today's Inspirational Quote"
+
+        android:textSize="30dp" />
+
+    <ImageView
+        android:id="@+id/dailyQuoteImage"
+        android:layout_width="match_parent"
+        android:layout_height="465dp"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp">
+
+        <ImageView
+            android:id="@+id/homeIcon"
+            android:layout_marginRight="100dp"
+            android:layout_marginLeft="15dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/homepage_icon"/>
+        <ImageView
+            android:id="@+id/meditationIcon"
+            android:layout_marginRight="100dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+         android:src="@drawable/meditation_icon"/>
+        <ImageView
+            android:id="@+id/musicIcon"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/music_icon"/>
+
+    </LinearLayout>
+
+
+    <Button
+        android:id="@+id/logout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:text="@string/logout" />
+</LinearLayout>
