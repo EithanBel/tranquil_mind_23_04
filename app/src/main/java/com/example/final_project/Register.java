@@ -9,16 +9,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -29,17 +23,16 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.util.HashMap;
 import java.util.Map;
 
 public class Register extends AppCompatActivity {
-    TextInputEditText editTextEmail, editTextPassword,editTextFirstName,editTextLastName,editTextPhoneNum;
+    TextInputEditText editTextEmail, editTextPassword, editTextFirstName, editTextLastName, editTextPhoneNum;
     Button buttonReg;
     FirebaseAuth mAuth;
     FirebaseFirestore mStore;
     String userID;
-ProgressBar progressBar;
+    ProgressBar progressBar;
 
 
     @Override
@@ -47,7 +40,7 @@ ProgressBar progressBar;
         super.onStart();
         // Check if user is signed in , if yes redirect user to HP of TranquilApp.
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null){
+        if (currentUser != null) {
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
             finish();
@@ -61,28 +54,28 @@ ProgressBar progressBar;
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_register);
         mAuth = FirebaseAuth.getInstance();
-        mStore=FirebaseFirestore.getInstance();
+        mStore = FirebaseFirestore.getInstance();
 
         editTextEmail = findViewById(R.id.email);
         editTextPassword = findViewById(R.id.password);
         buttonReg = findViewById(R.id.btn_register);
-        editTextFirstName=findViewById(R.id.firstName);
-        editTextLastName=findViewById(R.id.lastName);
-        editTextPhoneNum=findViewById(R.id.phone_number);
-        progressBar=findViewById(R.id.progressBar);
+        editTextFirstName = findViewById(R.id.firstName);
+        editTextLastName = findViewById(R.id.lastName);
+        editTextPhoneNum = findViewById(R.id.phone_number);
+        progressBar = findViewById(R.id.progressBar);
 
 
         buttonReg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                String email, password,firstName,lastName,phoneNum;
+                String email, password, firstName, lastName, phoneNum;
                 email = String.valueOf(editTextEmail.getText());
                 password = String.valueOf(editTextPassword.getText());
 
-                firstName=String.valueOf(editTextFirstName.getText());
-                lastName=String.valueOf(editTextLastName.getText());
-                phoneNum=String.valueOf(editTextPhoneNum.getText());
+                firstName = String.valueOf(editTextFirstName.getText());
+                lastName = String.valueOf(editTextLastName.getText());
+                phoneNum = String.valueOf(editTextPhoneNum.getText());
 
                 if (TextUtils.isEmpty(email)) {
                     Toast.makeText(Register.this, "Enter Email", Toast.LENGTH_SHORT).show();
@@ -94,11 +87,11 @@ ProgressBar progressBar;
                     return;
 
                 }
-                if (password.length()<6){
+                if (password.length() < 6) {
                     editTextPassword.setError("Password must be at least 6 characters");
                     return;
                 }
-                if (phoneNum.length()!=10){
+                if (phoneNum.length() != 10) {
                     editTextPassword.setError("Phone number must be 10 digits");
                     return;
                 }
@@ -123,13 +116,7 @@ ProgressBar progressBar;
                                                 .setDisplayName(fullName)
                                                 .build();
 
-//                                        firebaseUser.updateProfile(profileUpdates)
-//                                                .addOnCompleteListener(profileTask -> {
-//                                                    if (profileTask.isSuccessful()) {
-//                                                        Log.d(TAG, "Display name set to: " + fullName);
-//                                                    }
-//                                                });
-                                        firebaseUser.updateProfile(profileUpdates)
+                                       firebaseUser.updateProfile(profileUpdates)
                                                 .addOnCompleteListener(profileTask -> {
                                                     if (profileTask.isSuccessful()) {
                                                         Log.d(TAG, "Display name set to: " + fullName);
@@ -158,30 +145,26 @@ ProgressBar progressBar;
                                     }
 
 
-                                    userID=mAuth.getCurrentUser().getUid();
-                                    DocumentReference documentReference=mStore.collection("users").document(userID);
-                                    Map<String,Object> user=new HashMap<>();;
-                                    user.put("firstName",firstName);
-                                    user.put("lastName",lastName);
-                                    user.put("phone",phoneNum);
-                                    user.put("email",email);
+                                    userID = mAuth.getCurrentUser().getUid();
+                                    DocumentReference documentReference = mStore.collection("users").document(userID);
+                                    Map<String, Object> user = new HashMap<>();
+
+                                    user.put("firstName", firstName);
+                                    user.put("lastName", lastName);
+                                    user.put("phone", phoneNum);
+                                    user.put("email", email);
 
                                     documentReference.set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
-                                            Log.d(TAG,"onSuccess: user Profile is created for  "+ userID);
+                                            Log.d(TAG, "onSuccess: user Profile is created for  " + userID);
                                         }
                                     });
                                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                     startActivity(intent);
                                     finish();
 
-                                }
-
-
-                                else
-
-                                {
+                                } else {
                                     // If sign in fails, display a message to the user.
 
                                     Toast.makeText(Register.this, "Something went wrong..Try again.",

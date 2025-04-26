@@ -113,16 +113,28 @@ public class MainActivity extends AppCompatActivity {
         user=FirebaseAuth.getInstance().getCurrentUser();
 
 
-        if (user==null){
-
+//        if (user==null){
+//
+//            Intent intent = new Intent(getApplicationContext(), Login.class);
+//            startActivity(intent);
+//            finish();
+//        } else{
+//
+//
+//            textViewName.setText("Hello "+user.getDisplayName());
+//
+//        }
+        if (user == null) {
             Intent intent = new Intent(getApplicationContext(), Login.class);
             startActivity(intent);
             finish();
-        } else{
-
-
-            textViewName.setText("Hello "+user.getDisplayName());
-
+        } else {
+            String displayName = user.getDisplayName();
+            if (displayName != null && !displayName.isEmpty()) {
+                textViewName.setText("Hello " + displayName);
+            } else {
+                textViewName.setText(""); // or show a loading spinner until name is available
+            }
         }
 
 

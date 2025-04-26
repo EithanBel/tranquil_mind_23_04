@@ -1,10 +1,7 @@
 package com.example.final_project;
-
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Canvas;
-import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,25 +11,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.Toast;
-
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.media.MediaPlayer;
 import android.widget.Button;
-import android.content.Context;
-import android.graphics.Paint;
-import android.media.audiofx.Visualizer;
-import android.util.AttributeSet;
-
 import android.app.AlertDialog;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.LayoutInflater;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ListView;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -41,56 +25,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-
-//class VisualizerView extends View {
-//
-//    private final Paint paint = new Paint();
-//    private Visualizer visualizer;
-//
-//
-//
-//    public VisualizerView(Context context, AttributeSet attrs) {
-//        super(context, attrs);
-//        paint.setColor(0xFF00FF00);
-//        paint.setStrokeWidth(2f);
-//    }
-//
-//    public void setAudioSessionId(int audioSessionId) {
-//        if (audioSessionId == AudioManager.ERROR) {  // Check if audio session is invalid
-//            Log.e("VisualizerView", "Invalid audio session ID");
-//            return;
-//        }
-//
-//        if (visualizer != null) {
-//            visualizer.release();  // Release the old visualizer if it exists
-//        }
-//
-//        try {
-//            visualizer = new Visualizer(audioSessionId);
-//            visualizer.setEnabled(false);
-//            visualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[1]);
-//
-//            // Check if visualizer is successfully initialized
-//            if (visualizer.getEnabled()) {
-//                Log.i("VisualizerView", "Visualizer initialized successfully");
-//            } else {
-//                Log.e("VisualizerView", "Visualizer initialization failed");
-//            }
-//
-//            visualizer.setEnabled(true);
-//        } catch (Exception e) {
-//            Log.e("VisualizerView", "Error initializing Visualizer", e);
-//        }
-//    }
-//
-//
-//}
-
 
 
 
@@ -98,7 +35,7 @@ public class Music extends AppCompatActivity {
     ImageView meditationIcon, searchIcon, homeIcon;
     Button closeButton;
     private MediaPlayer mediaPlayer;
-    private VisualizerView visualizerView; // Moved the declaration here
+
     private MediaController mediaController;
     private static final int PICK_AUDIO_REQUEST = 1;
     private Uri audioUri;
@@ -223,6 +160,7 @@ LinearLayout searchOptionMusic;
 
 
 
+
     }
 
     private void fetchAllAudios() {
@@ -298,18 +236,7 @@ LinearLayout searchOptionMusic;
         startActivityForResult(intent, PICK_AUDIO_REQUEST);
     }
 
-    // Handling file selection result
-    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        if (requestCode == PICK_AUDIO_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-//            audioUri = data.getData();  // Store the selected file URI
-//            Toast.makeText(this, "Audio Selected!", Toast.LENGTH_SHORT).show();
-//        } else {
-//            Toast.makeText(this, "No Audio Selected!", Toast.LENGTH_SHORT).show();
-//        }
-//    }
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
@@ -387,36 +314,34 @@ LinearLayout searchOptionMusic;
 
 
 
-    // Helper function to find resource ID by name
-    private int getMusicResId(String name, String[] musicFiles, int[] musicResIds) {
-        for (int i = 0; i < musicFiles.length; i++) {
-            if (musicFiles[i].equals(name)) {
-                return musicResIds[i];
-            }
-        }
-        return -1;
-    }
+
     private void playMusic(int rawResourceId) {
-        // Stop and release the current MediaPlayer if it's already playing
         if (mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer.release();
             mediaPlayer = null;
         }
 
-        // Initialize MediaPlayer with raw resource
         mediaPlayer = MediaPlayer.create(this, rawResourceId);
         if (mediaPlayer != null) {
-            mediaPlayer.start();
-            Toast.makeText(this, "Playing Audio", Toast.LENGTH_SHORT).show();
+            mediaPlayer.setOnPreparedListener(mp -> {
+                mp.start();
+                Toast.makeText(this, "Playing Audio", Toast.LENGTH_SHORT).show();
 
-            // Initialize and attach the visualizer
-            setupVisualizer();
-            setupMediaController();
+
+                setupMediaController();
+            });
+
+            mediaPlayer.setOnErrorListener((mp, what, extra) -> {
+                Log.e("MediaPlayer", "Error: what=" + what + ", extra=" + extra);
+                return false;
+            });
         } else {
             Toast.makeText(this, "Error Loading Audio", Toast.LENGTH_SHORT).show();
         }
     }
+
+
 
     // Updated playMusic method
     // Overloaded method to handle strings
@@ -436,8 +361,7 @@ LinearLayout searchOptionMusic;
             mediaPlayer.start(); // Start the playback
             Toast.makeText(this, "Playing Audio", Toast.LENGTH_SHORT).show();
 
-            // Initialize and attach the visualizer
-            setupVisualizer();
+
 
             // Set up media controller
             setupMediaController();
@@ -446,6 +370,8 @@ LinearLayout searchOptionMusic;
             Toast.makeText(this, "Error Loading Audio", Toast.LENGTH_SHORT).show();
         }
     }
+
+
 
 
     private void setupMediaController() {
@@ -514,15 +440,9 @@ LinearLayout searchOptionMusic;
         findViewById(R.id.musicViewFrame).setVisibility(View.VISIBLE);
     }
 
-    private void setupVisualizer() {
-        if (visualizerView == null) {
-            visualizerView = findViewById(R.id.visualizerView);
-        }
-        int audioSessionId = mediaPlayer.getAudioSessionId();
-        if (audioSessionId != -1) {
-            visualizerView.setAudioSessionId(audioSessionId);
-        }
-    }
+
+
+
 
     @Override
     protected void onDestroy() {
@@ -532,7 +452,6 @@ LinearLayout searchOptionMusic;
         }
         super.onDestroy();
     }
-
 
 
 
@@ -623,78 +542,6 @@ LinearLayout searchOptionMusic;
     }
 
 }
-class VisualizerView extends View {
-
-    private final Paint paint = new Paint();
-    private Visualizer visualizer;
-    private byte[] waveform;
-
-    public VisualizerView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        paint.setColor(0xFFAA0000); // Red
-        paint.setStrokeWidth(4f);
-    }
-
-    public void setAudioSessionId(int audioSessionId) {
-        if (audioSessionId == AudioManager.ERROR) {
-            Log.e("VisualizerView", "Invalid audio session ID");
-            return;
-        }
-
-        if (visualizer != null) {
-            visualizer.release();
-        }
-
-        try {
-            visualizer = new Visualizer(audioSessionId);
-            visualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[1]);
-
-            visualizer.setDataCaptureListener(new Visualizer.OnDataCaptureListener() {
-                @Override
-                public void onWaveFormDataCapture(Visualizer visualizer, byte[] waveform, int samplingRate) {
-                    VisualizerView.this.waveform = waveform;
-                    invalidate(); // Redraw with new data
-                }
-
-                @Override
-                public void onFftDataCapture(Visualizer visualizer, byte[] fft, int samplingRate) {
-                    // Optional: Implement FFT visualization here
-                }
-            }, Visualizer.getMaxCaptureRate() / 2, true, false);
-
-            visualizer.setEnabled(true);
-        } catch (Exception e) {
-            Log.e("VisualizerView", "Error initializing Visualizer", e);
-        }
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-
-        if (waveform == null) return;
-
-        int width = getWidth();
-        int height = getHeight();
-        int centerY = height / 2;
-        float xIncrement = (float) width / (float) waveform.length;
-
-        for (int i = 1; i < waveform.length; i++) {
-            float x1 = (i - 1) * xIncrement;
-            float y1 = centerY + ((byte) (waveform[i - 1] + 128)) * (centerY / 128f);
-            float x2 = i * xIncrement;
-            float y2 = centerY + ((byte) (waveform[i] + 128)) * (centerY / 128f);
-            canvas.drawLine(x1, y1, x2, y2, paint);
-        }
-    }
-
-    public void release() {
-        if (visualizer != null) {
-            visualizer.release();
-        }
-    }
-}
-
 class AudioModel {
     private String id;
     private String name;
