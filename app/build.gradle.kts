@@ -45,6 +45,8 @@ dependencies {
     implementation(libs.firebase.database)
     implementation(libs.firebase.storage)
     implementation("com.squareup.picasso:picasso:2.8")
+    implementation("androidx.work:work-runtime:2.9.0")//new
+    implementation("com.google.guava:guava:31.1-android")//new
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
