@@ -1,0 +1,115 @@
+@startuml
+
+skinparam classAttributeIconSize 0
+
+' Core Classes
+class HomePageScreen {
+    - Button loginBtn
+    - Button registerBtn
+    - FirebaseAuth firebaseAuth
+    + void onCreate(Bundle)
+    + void navigateToLogin()
+    + void navigateToRegister()
+    + void navigateToMain()
+}
+
+class Login {
+    - EditText emailEt
+    - EditText passwordEt
+    - Button loginBtn
+    - FirebaseAuth firebaseAuth
+    + void onCreate(Bundle)
+    + void loginUser()
+}
+
+class Register {
+    - EditText emailEt
+    - EditText passwordEt
+    - EditText confirmPasswordEt
+    - Button registerBtn
+    - FirebaseAuth firebaseAuth
+    + void onCreate(Bundle)
+    + void registerUser()
+}
+
+class MainActivity {
+    - Button meditationBtn
+    - Button musicBtn
+    - Button logoutBtn
+    - FirebaseAuth firebaseAuth
+    + void onCreate(Bundle)
+    + void navigateToMeditation()
+    + void navigateToMusic()
+    + void logout()
+}
+
+class Meditation {
+    - Uri videoUri
+    - MediaController mediaController
+    - MediaPlayer mediaPlayer
+    - StorageReference storageReference
+    - DatabaseReference databaseReference
+    - FirebaseAuth mAuth
+    - LinearLayout searchOption
+    + void onCreate(Bundle)
+    + void selectVideo()
+    + void uploadVideo(String, String)
+    + void playVideo(String)
+    + void searchVideos(String)
+    + void fetchAllVideos()
+    + void deleteVideo(VideoModel)
+    + void onActivityResult()
+    + void showVideoSelectionDialog(List<VideoModel>)
+}
+
+class Music {
+    - Uri audioUri
+    - MediaController mediaController
+    - MediaPlayer mediaPlayer
+    - StorageReference storageReference
+    - DatabaseReference databaseReference
+    - FirebaseAuth mAuth
+    - LinearLayout searchOptionMusic
+    + void onCreate(Bundle)
+    + void selectAudio()
+    + void uploadAudio(String, String)
+    + void playMusic(int)
+    + void playMusic(String)
+    + void searchAudios(String)
+    + void fetchAllAudios()
+    + void deleteAudio(AudioModel)
+    + void showAudioSelectionDialog(List<AudioModel>)
+}
+
+class VideoModel {
+    - String id
+    - String videoName
+    - String tags
+    - String videoUrl
+    + String getId()
+    + String getVideoName()
+    + String getTags()
+    + String getVideoUrl()
+}
+
+class AudioModel {
+    - String id
+    - String audioName
+    - String tags
+    - String audioUrl
+    + String getId()
+    + String getAudioName()
+    + String getTags()
+    + String getAudioUrl()
+}
+
+' Relationships
+HomePageScreen --> Login : navigates
+HomePageScreen --> Register : navigates
+HomePageScreen --> MainActivity : navigates
+MainActivity --> Meditation : opens
+MainActivity --> Music : opens
+Meditation --> VideoModel : uses
+Music --> AudioModel : uses
+
+@enduml
