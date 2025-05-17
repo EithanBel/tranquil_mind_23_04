@@ -40,6 +40,10 @@ public class HomePageScreen extends AppCompatActivity {
             // Set the layout resource for this activity
             setContentView(R.layout.activity_home_page_screen);
 
+            // START background music here
+            Intent musicIntent = new Intent(this, MusicService.class);
+            startService(musicIntent);
+
             // Initialize the Login and Register buttons by finding them in the layout
             buttonLogin = findViewById(R.id.login1);
             buttonRegister = findViewById(R.id.register1);
@@ -66,5 +70,14 @@ public class HomePageScreen extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        // STOP background music here (when leaving HomePageScreen)
+        Intent musicIntent = new Intent(this, MusicService.class);
+        stopService(musicIntent);
     }
 }
