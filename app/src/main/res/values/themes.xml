@@ -5,10 +5,12 @@
     </style>
 
     <style name="Theme.TranquilMind.Splash" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Fast background splash -->
         <item name="android:windowBackground">@drawable/splash_screen</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
     </style>
+
 
 
     <style name="Theme.Final_Project" parent="Base.Theme.Final_Project" />

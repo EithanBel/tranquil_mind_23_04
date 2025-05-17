@@ -15,22 +15,19 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Show splash theme for a moment
-        setTheme(R.style.Theme_TranquilMind_Splash);
 
-        // Set your custom layout
+        // Set layout AFTER theme background shows
         setContentView(R.layout.splash_screen_layout);
 
+        // Animate the welcome text (optional)
         TextView welcomeText = findViewById(R.id.welcomeText);
+        welcomeText.animate().alpha(1f).setDuration(1000).start();
 
-        // Create and start a fade-in animation
-        Animation fadeIn = new AlphaAnimation(0, 1);
-        fadeIn.setDuration(1000); // 1 second fade-in
-        welcomeText.startAnimation(fadeIn);
-
+        // After delay, go to home screen
         new Handler().postDelayed(() -> {
             startActivity(new Intent(SplashActivity.this, HomePageScreen.class));
             finish();
         }, SPLASH_DURATION);
     }
 }
+
