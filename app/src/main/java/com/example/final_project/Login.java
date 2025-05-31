@@ -1,5 +1,3 @@
-// Login.java
-// This Activity allows existing users to log into the app using their email and password via Firebase Authentication.
 
 package com.example.final_project;
 
@@ -19,27 +17,18 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+// this classes screen is seen after the user clicks on the login button
+
 public class Login extends AppCompatActivity {
 
     // UI elements for user input
     TextInputEditText editTextEmail, editTextPassword;
+
+    // declare button for login
     Button buttonLogin;
 
     // Firebase Authentication instance
     FirebaseAuth mAuth;
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Check if the user is already logged in
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
-            // If user is already authenticated, redirect directly to the MainActivity
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(intent);
-            finish(); // Prevent returning to login screen with back button
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +43,7 @@ public class Login extends AppCompatActivity {
         // Initialize FirebaseAuth instance
         mAuth = FirebaseAuth.getInstance();
 
-        // Link UI elements from XML
+        // Link UI elements from the XML
         editTextEmail = findViewById(R.id.email);
         editTextPassword = findViewById(R.id.password);
         buttonLogin = findViewById(R.id.btn_login);
@@ -63,16 +52,16 @@ public class Login extends AppCompatActivity {
         buttonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Get user input from text fields
+                // Get user input from the text fields
                 String email = String.valueOf(editTextEmail.getText());
                 String password = String.valueOf(editTextPassword.getText());
 
-                // Validate that email is not empty
+                // Validate that the email is not empty
                 if (TextUtils.isEmpty(email)) {
                     Toast.makeText(Login.this, "Enter Email", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                // Validate that password is not empty
+                // Validate that the password is not empty
                 if (TextUtils.isEmpty(password)) {
                     Toast.makeText(Login.this, "Enter Password", Toast.LENGTH_SHORT).show();
                     return;
@@ -84,13 +73,13 @@ public class Login extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
-                                    // If login successful, notify the user and navigate to MainActivity
+                                    // If the login is successful, notify the user and navigate to MainActivity
                                     Toast.makeText(getApplicationContext(), "Login successful, enjoy the app!", Toast.LENGTH_SHORT).show();
                                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                     startActivity(intent);
-                                    finish(); // Close login activity
+                                    finish(); // Closes login screen
                                 } else {
-                                    // If login failed, show an error message
+                                    // If the login failed, show an error message
                                     Toast.makeText(Login.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
                                 }
                             }

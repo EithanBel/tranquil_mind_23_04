@@ -2,32 +2,33 @@ package com.example.final_project;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class SplashActivity extends AppCompatActivity {
+// this classes screen is the first screen that the user sees when opening the app
 
-    private static final int SPLASH_DURATION = 2000; // 2 seconds
+public class SplashActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.splash_screen_layout); // opens the design of the splash activity
 
-        // Set layout AFTER theme background shows
-        setContentView(R.layout.splash_screen_layout);
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(3000); // waits 3 seconds
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
-        // Animate the welcome text (optional)
-        TextView welcomeText = findViewById(R.id.welcomeText);
-        welcomeText.animate().alpha(1f).setDuration(1000).start();
+                // moves to HomePageScreen class
+                Intent intent = new Intent(SplashActivity.this, HomePageScreen.class);
+                startActivity(intent);
+                finish(); // closes Splash screen
+            }
+        });
 
-        // After delay, go to home screen
-        new Handler().postDelayed(() -> {
-            startActivity(new Intent(SplashActivity.this, HomePageScreen.class));
-            finish();
-        }, SPLASH_DURATION);
+        thread.start(); // starts the thread
     }
 }
-

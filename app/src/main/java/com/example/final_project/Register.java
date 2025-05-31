@@ -1,6 +1,3 @@
-// Register.java
-// This Activity allows new users to register for the TranquilMind app by providing email, password, name, and phone number.
-// It uses Firebase Authentication to create accounts and Firestore to store additional user profile details.
 
 package com.example.final_project;
 
@@ -28,32 +25,27 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
+// this classes screen is seen after the user clicks on the register button
+
 public class Register extends AppCompatActivity {
 
     // UI elements for user input
     TextInputEditText editTextEmail, editTextPassword, editTextFirstName, editTextLastName, editTextPhoneNum;
+
+    // button for registration
     Button buttonReg;
+
+    // progress bar
     ProgressBar progressBar;
 
     // Firebase instances for Authentication and Firestore Database
     FirebaseAuth mAuth;
     FirebaseFirestore mStore;
 
-    // To store the user's ID once registered
+    // a variable to store the user's ID after being registered
     String userID;
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Check if the user is already logged in
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
-            // If logged in, navigate directly to MainActivity
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(intent);
-            finish();
-        }
-    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,14 +54,14 @@ public class Register extends AppCompatActivity {
         // Enable full screen edge-to-edge experience
         EdgeToEdge.enable(this);
 
-        // Set layout for registration screen
+        // Set layout for the registration screen
         setContentView(R.layout.activity_register);
 
         // Initialize Firebase Authentication and Firestore instances
         mAuth = FirebaseAuth.getInstance();
         mStore = FirebaseFirestore.getInstance();
 
-        // Link UI elements from XML
+        // Link UI elements from the XML
         editTextEmail = findViewById(R.id.email);
         editTextPassword = findViewById(R.id.password);
         buttonReg = findViewById(R.id.btn_register);
@@ -78,31 +70,34 @@ public class Register extends AppCompatActivity {
         editTextPhoneNum = findViewById(R.id.phone_number);
         progressBar = findViewById(R.id.progressBar);
 
-        // Set click listener for register button
+        // Set click listener for the register button
         buttonReg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                // Retrieve input values from fields
+                // getting the input values from fields
                 String email = String.valueOf(editTextEmail.getText());
                 String password = String.valueOf(editTextPassword.getText());
                 String firstName = String.valueOf(editTextFirstName.getText());
                 String lastName = String.valueOf(editTextLastName.getText());
                 String phoneNum = String.valueOf(editTextPhoneNum.getText());
 
-                // Validate user inputs
+                // Validate that the email is not empty
                 if (TextUtils.isEmpty(email)) {
                     Toast.makeText(Register.this, "Enter Email", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                // validate that the password is not empty
                 if (TextUtils.isEmpty(password)) {
                     Toast.makeText(Register.this, "Enter Password", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                // validate that the passwords length is at least 6 digits
                 if (password.length() < 6) {
                     editTextPassword.setError("Password must be at least 6 characters");
                     return;
                 }
+                // validate that the phones number is 10 digits
                 if (phoneNum.length() != 10) {
                     editTextPhoneNum.setError("Phone number must be 10 digits");
                     return;
@@ -132,6 +127,7 @@ public class Register extends AppCompatActivity {
 
                                         firebaseUser.updateProfile(profileUpdates)
                                                 .addOnCompleteListener(profileTask -> {
+                                                    // if profile update succeeds
                                                     if (profileTask.isSuccessful()) {
                                                         Log.d(TAG, "Display name set to: " + fullName);
 

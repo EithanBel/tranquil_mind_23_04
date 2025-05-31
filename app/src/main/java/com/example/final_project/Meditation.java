@@ -17,9 +17,6 @@ import android.widget.Toast;
 import android.widget.VideoView;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import android.app.ProgressDialog;
 import android.net.Uri;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,22 +31,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+// this classes screen is the meditation screen
 
 public class Meditation extends AppCompatActivity {
-
-    // Declare UI components for navigation and video controls
     ImageView searchIcon, musicIcon, homeIcon; // Icons for search, music, and home navigation
-    Button meditationHealthButton, meditationFocusButton, meditationStudyButton, meditationRelaxButton, closeButton; // Buttons for different meditation categories and closing the video
+    Button meditationHealthButton, meditationFocusButton, meditationStudyButton, meditationRelaxButton, closeButton; // Buttons for different meditation categories and a button for closing the video
     VideoView videoView; // VideoView to play the meditation videos
-    MediaController mediaController; // Media controller to control video playback (play, pause, etc.)
+    MediaController mediaController; // Media controller to control the videos playback
     FrameLayout meditationVideoFrame; // FrameLayout to display the video
     TextView nowPlayingField; // TextView to display the currently playing video
-    LinearLayout searchOption; // Layout for the search option (search bar, etc.)
+    LinearLayout searchOption; // Layout for the search option
 
     // Constants and variables for video upload and storage
-    private static final int PICK_VIDEO_REQUEST = 1; // Request code for picking a video from storage
+    private static final int PICK_VIDEO_REQUEST = 1; // Request code for picking a video from the storage
     private Uri videoUri; // URI to store the picked video
-    private StorageReference storageReference; // Firebase Storage reference to store videos
+    private StorageReference storageReference; // Firebase Storage reference to store the videos
     private DatabaseReference databaseReference; // Firebase Database reference for video metadata
     private Button uploadVideoBtn; // Button to upload a video
 
@@ -58,7 +54,7 @@ public class Meditation extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this); // Enabling edge-to-edge display mode
-        setContentView(R.layout.activity_meditation); // Set the activity layout
+        setContentView(R.layout.activity_meditation); // Set the screen of the meditation
 
         // Initialize the UI components
         searchIcon = findViewById(R.id.searchIcon);
@@ -89,48 +85,18 @@ public class Meditation extends AppCompatActivity {
         uploadVideoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                selectVideo(); // Trigger video selection when clicked
+                selectVideo(); // opens video selection when clicked
             }
         });
 
-        // Set a listener to fetch video data from Firebase Database
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // Loop through all videos stored in Firebase
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    // Get the video data as a map
-                    Map<String, Object> videoData = (Map<String, Object>) snapshot.getValue();
-                    // Extract video URL from the data
-                    String videoUrl = (String) videoData.get("videoUrl"); // Replace with actual field name if needed
 
-                    // If video URL is valid, play it
-                    if (videoUrl != null) {
-                        playVideo(videoUrl);
-                    } else {
-                        Log.e("VideoError", "No video URL found for " + snapshot.getKey());
-                    }
-                }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Handle errors in reading data
-                Log.e("DatabaseError", "Failed to read value.", databaseError.toException());
-            }
-        });
-
-        // Set window insets for the main layout
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
 
         // Music icon click listener to navigate to the Music activity
         musicIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+               // navigates to the music class
                 Intent intent = new Intent(getApplicationContext(), Music.class);
                 startActivity(intent);
                 finish(); // Finish the current activity
@@ -141,6 +107,7 @@ public class Meditation extends AppCompatActivity {
         searchIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // checks if the search option is not visible
                 if (searchOption.getVisibility() == View.GONE) {
                     searchOption.setVisibility(View.VISIBLE); // Show search options
                 } else {
@@ -166,7 +133,7 @@ public class Meditation extends AppCompatActivity {
                 meditationVideoFrame.setVisibility(View.VISIBLE); // Show the video frame
                 String videoPath = "android.resource://" + getPackageName() + "/" + R.raw.meditation_health_video1; // Path to the health meditation video
                 videoView.setVideoPath(videoPath);
-                videoView.start(); // Start playing the video
+                videoView.start(); // Starts playing the video
             }
         });
 
@@ -176,7 +143,7 @@ public class Meditation extends AppCompatActivity {
                 meditationVideoFrame.setVisibility(View.VISIBLE); // Show the video frame
                 String videoPath = "android.resource://" + getPackageName() + "/" + R.raw.meditation_study_video3; // Path to the study meditation video
                 videoView.setVideoPath(videoPath);
-                videoView.start(); // Start playing the video
+                videoView.start(); // Starts playing the video
             }
         });
 
@@ -186,7 +153,7 @@ public class Meditation extends AppCompatActivity {
                 meditationVideoFrame.setVisibility(View.VISIBLE); // Show the video frame
                 String videoPath = "android.resource://" + getPackageName() + "/" + R.raw.meditation_focus_video_2; // Path to the focus meditation video
                 videoView.setVideoPath(videoPath);
-                videoView.start(); // Start playing the video
+                videoView.start(); // Starts playing the video
             }
         });
 
@@ -223,6 +190,38 @@ public class Meditation extends AppCompatActivity {
                 Toast.makeText(Meditation.this, "Enter a search term", Toast.LENGTH_SHORT).show(); // Show a message if query is empty
             }
         });
+
+
+        // Set a listener to fetch video data from Firebase Database
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Loop through all videos stored in Firebase
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    // Get the video data as a map
+                    Map<String, Object> videoData = (Map<String, Object>) snapshot.getValue();
+                    // Extract video URL from the data
+                    String videoUrl = (String) videoData.get("videoUrl"); // Replace with actual field name if needed
+
+                    // If video URL is valid, play it
+                    if (videoUrl != null) {
+                        playVideo(videoUrl);
+                    } else {
+                        Log.e("VideoError", "No video URL found for " + snapshot.getKey());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle errors in reading data
+                Log.e("DatabaseError", "Failed to read value.", databaseError.toException());
+            }
+        });
+
+
+
+
     }
 
 
@@ -293,6 +292,7 @@ public class Meditation extends AppCompatActivity {
 
 
 
+
     // Method to upload a selected video to Firebase Storage and store its metadata in Firebase Realtime Database
     private void uploadVideo(String videoName, String videoTags) {
         // Check if a valid video URI exists
@@ -318,7 +318,7 @@ public class Meditation extends AppCompatActivity {
                     // Create a new VideoModel object with metadata (ID, name, tags, and video URL)
                     VideoModel video = new VideoModel(videoId, videoName, videoTags, uri.toString());
 
-                    // Store the video metadata in Firebase Realtime Database under the user's section
+                    // Store the videos information in Firebase Realtime Database under the user's section
                     databaseReference.child(userId).child(videoId).setValue(video);
 
                     // Dismiss the progress dialog after the upload completes successfully
@@ -568,7 +568,7 @@ class VideoModel {
         this.id = id;  // Set the video ID
     }
 
-    // Getter and Setter for Name (renamed to getVideoName for consistency)
+    // Getter and Setter for Name
     public String getVideoName() {
         return name;  // Return the video name
     }
@@ -586,7 +586,7 @@ class VideoModel {
         this.tags = tags;  // Set the tags for the video
     }
 
-    // Getter and Setter for URL (renamed to getVideoUrl for consistency)
+    // Getter and Setter for URL
     public String getVideoUrl() {
         return url;  // Return the URL where the video is stored
     }

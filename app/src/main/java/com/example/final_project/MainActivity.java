@@ -29,10 +29,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-/**
- * MainActivity - The homepage of TranquilMind App after successful login.
- * Displays greeting, random daily quote, and provides navigation to Meditation and Music sections.
- */
+// this classes screen is seen after a successful registration or login
+
 public class MainActivity extends AppCompatActivity {
 
     // Firebase authentication instance
@@ -49,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
 
     // UI elements for navigation
     ImageView meditationIcon, musicIcon;
+
+    // a variable for the quotes
     ImageView dailyQuoteImage;
 
     // Firebase Storage references
@@ -57,22 +57,14 @@ public class MainActivity extends AppCompatActivity {
 
     @SuppressLint("MissingInflatedId")
 
-    @Override
-    protected void onResume() {
-        super.onResume();
 
-        SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putLong("last_open_time", System.currentTimeMillis());
-        editor.apply();
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
-        scheduleTestReminderWorker();
+        setContentView(R.layout.activity_main); // opens the screen of the main activity class
+
 
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance();
@@ -84,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Initialize Firebase Storage and reference to daily quotes folder
         storage = FirebaseStorage.getInstance();
-        storageRef = storage.getReference().child("daily_qoutes");
+        storageRef = storage.getReference().child("daily_qoutes"); // gets access to the daily quotes folder
 
         // Fetch and display a random daily quote image
         fetchRandomImage();
@@ -96,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
                 // Navigate to Meditation Activity
                 Intent intent = new Intent(getApplicationContext(), Meditation.class);
                 startActivity(intent);
-                finish();
+                finish(); // closes the main activity screen
             }
         });
 
@@ -107,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
                 // Navigate to Music Activity
                 Intent intent = new Intent(getApplicationContext(), Music.class);
                 startActivity(intent);
-                finish();
+                finish(); // closes the main activity screen
             }
         });
 
@@ -115,54 +107,54 @@ public class MainActivity extends AppCompatActivity {
         textViewName = findViewById(R.id.user_details);
         user = auth.getCurrentUser();
 
-        if (user == null) {
-            // If no user is logged in, redirect to Login screen
-            Intent intent = new Intent(getApplicationContext(), Login.class);
-            startActivity(intent);
-            finish();
-        } else {
             String displayName = user.getDisplayName();
+            // checks if the display name is not empty
             if (displayName != null && !displayName.isEmpty()) {
-                textViewName.setText("Hello " + displayName);
+                textViewName.setText("Hello " + displayName); // shows Hello and the display name
             } else {
-                textViewName.setText(""); // Optionally show a placeholder or loading
+                textViewName.setText(""); // shows empty text box
             }
-        }
 
-        // Logout functionality
+
+        // set onClickListener for the logout button
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FirebaseAuth.getInstance().signOut();
+                FirebaseAuth.getInstance().signOut(); // signing out in firebase
+                // navigates to home page screen class
                 Intent intent = new Intent(getApplicationContext(), HomePageScreen.class);
                 startActivity(intent);
-                finish();
+                finish(); // closes the layout of the main activity
             }
         });
     }
 
-    /**
-     * Fetches a random daily quote image from Firebase Storage and displays it in the ImageView.
-     */
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//        scheduleTestReminderWorker(); // only schedules the check when user leaves the app,  this function shows the user a message after not using the app for x time
+//    }
+
+     // Fetches a random daily quote image from Firebase Storage and displays it in the ImageView.
     private void fetchRandomImage() {
         storageRef.listAll().addOnSuccessListener(listResult -> {
             List<StorageReference> imageRefs = new ArrayList<>(listResult.getItems());
 
-            if (!imageRefs.isEmpty()) {
-                // Preload all images into cache for smoother experience
+            if (!imageRefs.isEmpty()) { // checks if the list is not empty
+                // Preload all images into memory for faster experience
                 for (StorageReference imageRef : imageRefs) {
                     imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                         Picasso.get().load(uri).fetch();
                     });
                 }
 
-                // Select and display a random image
-                Random random = new Random();
-                StorageReference randomImageRef = imageRefs.get(random.nextInt(imageRefs.size()));
+
+                Random random = new Random(); // random variable
+                StorageReference randomImageRef = imageRefs.get(random.nextInt(imageRefs.size())); // stores reference to a random image
 
                 randomImageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                     Log.d("Firebase", "Image URI: " + uri.toString());
-                    Picasso.get().load(uri).into(dailyQuoteImage);
+                    Picasso.get().load(uri).into(dailyQuoteImage); // loads the random image into the screen
                 }).addOnFailureListener(e -> {
                     Log.e("Firebase", "Error getting download URL", e);
                 });
@@ -174,7 +166,23 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void scheduleTestReminderWorker() {
+
+    @Override
+    protected void onUserLeaveHint() {
+        super.onUserLeaveHint();
+        scheduleTestReminderWorker();
+    }
+
+    @Override
+    protected void onResume() { // a function that saves the last time that the app was used
+        super.onResume();
+
+        SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putLong("last_open_time", System.currentTimeMillis());
+        editor.apply();
+    }
+    private void scheduleTestReminderWorker() { // this function shows the user a message after not using the app for x time
         OneTimeWorkRequest testWorkRequest =
                 new OneTimeWorkRequest.Builder(NotificationWorker.class)
                         .setInitialDelay(1, TimeUnit.MINUTES)

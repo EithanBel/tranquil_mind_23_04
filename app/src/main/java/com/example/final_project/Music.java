@@ -35,6 +35,8 @@ public class Music extends AppCompatActivity {
 
     // Views for UI elements
     ImageView meditationIcon, searchIcon, homeIcon;
+
+    // a button to close the video
     Button closeButton;
     private MediaPlayer mediaPlayer;  // MediaPlayer for audio playback
     private MediaController mediaController; // Controller for media playback control
@@ -101,12 +103,13 @@ public class Music extends AppCompatActivity {
         });
 
 
-       // Navigation setup
+       // a click listener for the meditation icon
         meditationIcon.setOnClickListener(v -> {
             Intent intent = new Intent(getApplicationContext(), Meditation.class);
             startActivity(intent);
             finish();
         });
+        // a click listener for the home icon
         homeIcon.setOnClickListener(v -> {
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
@@ -138,7 +141,7 @@ public class Music extends AppCompatActivity {
 
                 }
 
-                // clear previous views
+
 
                 // Hide the FrameLayout
                 musicViewFrame.setVisibility(View.GONE);
@@ -558,20 +561,6 @@ public class Music extends AppCompatActivity {
         builder.show();  // Show the audio selection dialog
     }
 
-//    private void deleteAudio(AudioModel audio) {
-//        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-//
-//        // Delete from Firebase Storage
-//        StorageReference audioRef = FirebaseStorage.getInstance().getReferenceFromUrl(audio.getAudioUrl());
-//        audioRef.delete().addOnSuccessListener(aVoid -> {
-//            // Delete from Realtime Database
-//            databaseReference.child(userId).child(audio.getId()).removeValue().addOnSuccessListener(aVoid1 -> {
-//                Toast.makeText(Music.this, "Audio deleted successfully!", Toast.LENGTH_SHORT).show();
-//                fetchAllAudios(); // Refresh audio list
-//            }).addOnFailureListener(e -> Toast.makeText(Music.this, "Failed to delete from database!", Toast.LENGTH_SHORT).show());
-//        }).addOnFailureListener(e -> Toast.makeText(Music.this, "Failed to delete video from storage!", Toast.LENGTH_SHORT).show());
-//    }
-
     private void deleteAudio(AudioModel audio) {
         // Get the current user's ID from Firebase Authentication
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -628,8 +617,7 @@ public class Music extends AppCompatActivity {
 
 }
 
-//Firebase Realtime Database need a structured object to save and retrieve data easily — this class gives Firebase the structure it expects.
-//It makes it easy to pass audio data around inside the app
+// audio model class
 class AudioModel {
     private String id;
     private String name;
