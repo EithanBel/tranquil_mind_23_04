@@ -129,11 +129,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-//    @Override
-//    protected void onStop() {
-//        super.onStop();
-//        scheduleTestReminderWorker(); // only schedules the check when user leaves the app,  this function shows the user a message after not using the app for x time
-//    }
 
      // Fetches a random daily quote image from Firebase Storage and displays it in the ImageView.
     private void fetchRandomImage() {
