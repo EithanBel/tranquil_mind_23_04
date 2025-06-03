@@ -160,29 +160,4 @@ public class MainActivity extends AppCompatActivity {
             Log.e("Firebase", "Error fetching images", e);
         });
     }
-
-
-    @Override
-    protected void onUserLeaveHint() {
-        super.onUserLeaveHint();
-        scheduleTestReminderWorker();
-    }
-
-    @Override
-    protected void onResume() { // a function that saves the last time that the app was used
-        super.onResume();
-
-        SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putLong("last_open_time", System.currentTimeMillis());
-        editor.apply();
-    }
-    private void scheduleTestReminderWorker() { // this function shows the user a message after not using the app for x time
-        OneTimeWorkRequest testWorkRequest =
-                new OneTimeWorkRequest.Builder(NotificationWorker.class)
-                        .setInitialDelay(1, TimeUnit.MINUTES)
-                        .build();
-
-        WorkManager.getInstance(this).enqueue(testWorkRequest);
-    }
 }
